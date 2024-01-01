@@ -1,0 +1,17 @@
+{
+  "manifest_version": 2,
+  "name": "AutoScroll Extension",
+  "version": "1.0",
+  "description": "Extensión para desplazamiento automático",
+  "permissions": ["activeTab", "storage"],
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}
