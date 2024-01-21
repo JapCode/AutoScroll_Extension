@@ -1,25 +1,33 @@
-// Recuperar el estado almacenado (activo o desactivado)
 let isActive = false;
+let scrollSpeed = 5; // Valor predeterminado
 
-chrome.storage.sync.get(["isActive"], function (result) {
+chrome.storage.sync.get(["isActive", "scrollSpeed"], function (result) {
   isActive = result.isActive || false;
+  scrollSpeed = result.scrollSpeed || 5;
+
+  // Resto del código
 });
 
 function scrollAutomatically() {
   if (isActive) {
-    window.scrollBy(0, 10); // Desplázate 10 píxeles hacia abajo
+    window.scrollBy(0, scrollSpeed); // Desplázate según la velocidad configurada
   }
 }
 
-setInterval(scrollAutomatically, 1000);
+setInterval(scrollAutomatically, 16); // Aproximadamente 60 FPS para un desplazamiento más suave
 
-// Escuchar eventos del teclado
 window.addEventListener("keydown", function (event) {
-  // Verificar si la tecla presionada es la barra espaciadora (código 32)
-  if (event.keyCode === 32) {
-    // Cambiar el estado activo/desactivado al presionar la barra espaciadora
+  // Verificar si la tecla presionada es Ctrl + Shift
+  if (event.ctrlKey && event.shiftKey) {
     isActive = !isActive;
-    // Guardar el estado en el almacenamiento
     chrome.storage.sync.set({ isActive: isActive });
+  }
+});
+
+// Escuchar mensajes del popup
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.action === "updateSpeed") {
+    // Actualizar la velocidad del desplazamiento
+    scrollSpeed = request.speed;
   }
 });
